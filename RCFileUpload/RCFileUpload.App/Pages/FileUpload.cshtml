@@ -1,0 +1,30 @@
+﻿@page "/"
+@inherits ComponentBase
+
+<h1>File Upload Sample</h1>
+
+<input type="file" multiple accept="Image/*" onchange="rcFileUpload.loadFiles(this)" onload=@StateHasChanged />
+<button onclick=@DeleteAll >Delete All</button>
+
+<div class="gallery">
+    <ul class="gallery_list">
+
+        @foreach (var file in System.IO.Directory.GetFiles(@"wwwroot\uploads\"))
+        {
+            <li>
+                <figure>
+                    <img src="/uploads/@(System.IO.Path.GetFileName(file))" onerror="this.style.display='none'" />
+                </figure>
+            </li>
+        }
+    </ul>
+</div>
+@functions
+{
+  protected Task DeleteAll()
+  {
+      var uploads = new System.IO.DirectoryInfo(@"wwwroot\uploads");
+      uploads.EnumerateFiles().ToList().ForEach(file => file.Delete());
+      return Task.CompletedTask;
+  }
+}
