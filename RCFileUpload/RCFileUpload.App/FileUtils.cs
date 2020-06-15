@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace RCFileUpload.App
+namespace RCFileUploadApp
 {
 	public static class FileUtils
 	{

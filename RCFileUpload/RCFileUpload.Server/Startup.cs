@@ -16,7 +16,11 @@ namespace RCFileUpload.Server
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddRazorComponents<App.Startup>();
+			services.AddRazorPages();
+			services.AddServerSideBlazor(o=> 
+			{
+				o.DetailedErrors = true;
+			});
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -26,16 +30,27 @@ namespace RCFileUpload.Server
 			{
 				app.UseDeveloperExceptionPage();
 			}
+			else
+			{
+				app.UseExceptionHandler("/Error");
+				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+				app.UseHsts();
+			}
 
+			app.UseHttpsRedirection();
 			app.UseStaticFiles();
 
-			app.UseSignalR(route => route.MapHub<BlazorHub>(BlazorHub.DefaultPath, o =>
-			{
-				o.ApplicationMaxBufferSize = 0; // larger size
-				o.TransportMaxBufferSize = 0; // larger size
-			}));
+			app.UseRouting();
 
-			app.UseRazorComponents<App.Startup>();
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapBlazorHub(o =>
+				{
+					o.ApplicationMaxBufferSize = 0;
+					o.TransportMaxBufferSize = 0;
+				});
+				endpoints.MapFallbackToPage("/_Host");
+			});
 		}
 	}
 }
